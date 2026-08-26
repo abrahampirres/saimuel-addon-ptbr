@@ -22,3 +22,4 @@
 - [x] Atualizar a leitura do histórico do monitor para classificar corretamente a nova rota `addon-status` como verificação essencial.
 - [x] Corrigir a conexão WebSocket/HMR do Vite na prévia de desenvolvimento, sem impacto no addon publicado.
 - [x] Validar uma atualização HMR real na prévia HTTPS e confirmar que o domínio público do addon continua íntegro.
+- [x] Remover o painel “Critérios de confiança” e substituí-lo por instruções visuais, diretas e intuitivas de instalação no Stremio.

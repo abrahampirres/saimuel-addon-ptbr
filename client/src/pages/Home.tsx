@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Activity, BadgeCheck, Check, Clipboard, ExternalLink, Film, Radio, ShieldCheck, Sparkles, Tv } from "lucide-react";
+import { ArrowUpRight, BadgeCheck, Check, Clipboard, ExternalLink, Film, Radio, ShieldCheck, Sparkles, Tv } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 type ProviderStatus = {
@@ -131,19 +131,33 @@ export default function Home() {
             </div>
           </div>
 
-          <aside className="rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.045] p-5 sm:p-7">
-            <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-cyan-200">Critérios de confiança</p>
-            <h2 className="mt-2 text-xl font-extrabold tracking-tight">O que este addon faz — e o que não faz.</h2>
-            <div className="mt-6 space-y-4 text-sm leading-6 text-slate-400">
-              <div className="rounded-lg border border-white/10 bg-black/20 p-3">
-                <div className="flex items-center gap-2 text-xs font-bold text-slate-200"><Activity size={14} className={status?.monitor.status === "healthy" ? "text-emerald-300" : status?.monitor.status === "degraded" ? "text-amber-200" : "text-slate-400"} /> Monitoramento: {status?.monitor.label ?? "Carregando status"}</div>
-                {status?.monitor.checkedAt && <p className="mt-1 font-mono text-[10px] text-slate-500">Última verificação: {new Date(status.monitor.checkedAt).toLocaleString("pt-BR")} · {status.monitor.failedChecks}/{status.monitor.totalChecks} falhas</p>}
+          <aside className="relative overflow-hidden rounded-2xl border border-emerald-300/20 bg-emerald-300/[0.045] p-5 sm:p-7">
+            <div className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-emerald-300/10 blur-3xl" />
+            <div className="relative">
+              <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-emerald-300">Guia rápido</p>
+              <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-white">Instale em menos de um minuto.</h2>
+              <p className="mt-2 text-sm leading-6 text-slate-400">Use o botão principal no topo. O Stremio reconhecerá o manifesto automaticamente.</p>
+
+              <ol className="mt-6 space-y-3">
+                <li className="flex gap-3 rounded-xl border border-white/10 bg-black/20 p-3.5">
+                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-emerald-300 font-mono text-xs font-extrabold text-slate-950">1</span>
+                  <div><p className="text-sm font-bold text-white">Toque em “Instalar no Stremio”</p><p className="mt-1 text-xs leading-5 text-slate-400">Abra o botão verde no topo desta página.</p></div>
+                </li>
+                <li className="flex gap-3 rounded-xl border border-white/10 bg-black/20 p-3.5">
+                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full border border-emerald-300/40 font-mono text-xs font-extrabold text-emerald-300">2</span>
+                  <div><p className="text-sm font-bold text-white">Confirme no aplicativo</p><p className="mt-1 text-xs leading-5 text-slate-400">O Stremio abrirá uma tela para adicionar o addon.</p></div>
+                </li>
+                <li className="flex gap-3 rounded-xl border border-white/10 bg-black/20 p-3.5">
+                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full border border-emerald-300/40 font-mono text-xs font-extrabold text-emerald-300">3</span>
+                  <div><p className="text-sm font-bold text-white">Escolha um filme ou série</p><p className="mt-1 text-xs leading-5 text-slate-400">As opções PT-BR aparecerão na área de streams do título.</p></div>
+                </li>
+              </ol>
+
+              <div className="mt-5 flex items-center gap-2 border-t border-white/10 pt-4 text-xs text-slate-400">
+                <ArrowUpRight size={15} className="shrink-0 text-emerald-300" />
+                <span>Se o app não abrir, copie o manifesto acima e adicione-o manualmente no Stremio.</span>
               </div>
-              <p><span className="font-semibold text-slate-200">Filtro PT/pt-BR:</span> só entram providers que declaram suporte a português. Uma indicação explícita de outro idioma é descartada na resposta.</p>
-              <p><span className="font-semibold text-slate-200">Sem repetição:</span> Peachify aparece uma vez, mesmo estando declarado em mais de um repositório.</p>
-              <p><span className="font-semibold text-slate-200">EmbedPlay:</span> permanece apenas como índice potencial de IDs. Não é usado para reprodução enquanto não houver uma rota pública de streams verificável.</p>
             </div>
-            <div className="mt-6 rounded-lg border border-white/10 bg-black/20 p-3 font-mono text-[11px] leading-5 text-slate-500">Use somente o manifesto no subdomínio público publicado. Os links são retornados por fontes de terceiros; a disponibilidade pode variar e o uso deve respeitar as leis e os direitos aplicáveis.</div>
           </aside>
         </section>
       </main>
