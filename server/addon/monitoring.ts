@@ -90,7 +90,7 @@ async function probeProviderSource(provider: ReturnType<typeof getActiveProvider
 
 export function summarizeChecks(checks: MonitorCheck[], runId = randomUUID()): MonitorSummary {
   const failedChecks = checks.filter(check => !check.healthy).length;
-  const coreChecks = checks.filter(check => check.target === "manifest" || check.target === "healthz");
+  const coreChecks = checks.filter(check => check.target === "manifest" || check.target === "addon-status");
   const coreFailed = coreChecks.some(check => !check.healthy);
   const status = coreFailed ? "down" : failedChecks > 0 ? "degraded" : "healthy";
   return { runId, status, totalChecks: checks.length, failedChecks, checks };
@@ -108,7 +108,10 @@ export async function runAddonMonitor(publicOrigin: string): Promise<MonitorSumm
       const manifest = body as { id?: unknown; resources?: unknown; types?: unknown };
       return manifest.id === "community.saimuel.addon.ptbr" && Array.isArray(manifest.resources) && Array.isArray(manifest.types);
     }),
-    probeJsonEndpoint("healthz", `${origin}/healthz`, body => (body as { ok?: unknown }).ok === true),
+    probeJsonEndpoint("addon-status", `${origin}/api/addon/status`, body => {
+      const status = body as { providers?: unknown; monitor?: unknown };
+      return Array.isArray(status.providers) && typeof status.monitor === "object" && status.monitor !== null;
+    }),
     ...getActiveProviders().map(probeProviderSource),
   ]);
 

@@ -18,3 +18,4 @@
 - [ ] Validar a estratégia de continuidade e orientar a publicação em um domínio estável para instalações futuras no Stremio.
 - [x] Configurar a interface e a documentação para utilizar exclusivamente um subdomínio público fixo gratuito em `manus.space` após a publicação.
 - [ ] Após a publicação, criar e validar a rotina automática de monitoramento do domínio público a cada 15 minutos.
+- [x] Corrigir o falso alerta causado pela rota reservada `/healthz`, usando uma rota pública própria do addon no monitoramento.
