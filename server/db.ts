@@ -116,7 +116,7 @@ export async function getLatestAddonMonitor() {
 
   const checks = await db.select().from(addonMonitorRuns).where(eq(addonMonitorRuns.runId, latest.runId));
   const failedChecks = checks.filter(check => check.healthy !== 1).length;
-  const coreFailed = checks.some(check => (check.target === "manifest" || check.target === "healthz") && check.healthy !== 1);
+  const coreFailed = checks.some(check => (check.target === "manifest" || check.target === "addon-status") && check.healthy !== 1);
   return {
     status: coreFailed ? "down" as const : failedChecks > 0 ? "degraded" as const : "healthy" as const,
     checkedAt: latest.checkedAt,

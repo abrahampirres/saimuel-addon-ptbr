@@ -19,3 +19,4 @@
 - [x] Configurar a interface e a documentação para utilizar exclusivamente um subdomínio público fixo gratuito em `manus.space` após a publicação.
 - [ ] Após a publicação, criar e validar a rotina automática de monitoramento do domínio público a cada 15 minutos.
 - [x] Corrigir o falso alerta causado pela rota reservada `/healthz`, usando uma rota pública própria do addon no monitoramento.
+- [x] Atualizar a leitura do histórico do monitor para classificar corretamente a nova rota `addon-status` como verificação essencial.
