@@ -47,7 +47,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen overflow-hidden bg-[#060a14] text-slate-100">
+    <div className="min-h-screen overflow-hidden bg-[#060a14] text-slate-100" data-preview-surface="addon-installation">
       <div className="pointer-events-none fixed inset-0 hero-grid opacity-60" />
       <div className="pointer-events-none fixed -left-32 top-16 h-96 w-96 rounded-full bg-emerald-400/10 blur-[120px]" />
       <div className="pointer-events-none fixed -right-28 bottom-0 h-96 w-96 rounded-full bg-cyan-400/10 blur-[120px]" />

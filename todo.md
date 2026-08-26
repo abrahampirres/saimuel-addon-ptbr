@@ -20,3 +20,5 @@
 - [x] Após a publicação, criar e validar a rotina automática de monitoramento do domínio público a cada 15 minutos.
 - [x] Corrigir o falso alerta causado pela rota reservada `/healthz`, usando uma rota pública própria do addon no monitoramento.
 - [x] Atualizar a leitura do histórico do monitor para classificar corretamente a nova rota `addon-status` como verificação essencial.
+- [x] Corrigir a conexão WebSocket/HMR do Vite na prévia de desenvolvimento, sem impacto no addon publicado.
+- [x] Validar uma atualização HMR real na prévia HTTPS e confirmar que o domínio público do addon continua íntegro.
