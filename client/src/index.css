@@ -175,3 +175,29 @@
     }
   }
 }
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, monospace;
+}
+
+@layer base {
+  * { border-color: rgba(255, 255, 255, 0.1); }
+  body { margin: 0; background: #060a14; color: #f8fafc; font-family: var(--font-sans); }
+  button, a { -webkit-tap-highlight-color: transparent; }
+}
+
+.hero-grid {
+  background-image: linear-gradient(rgba(148,163,184,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,.06) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(to bottom, black 0%, transparent 78%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  main { animation: settle-in 420ms cubic-bezier(.23, 1, .32, 1) both; }
+  button, a { transition: transform 160ms cubic-bezier(.23, 1, .32, 1), background-color 160ms cubic-bezier(.23, 1, .32, 1), color 160ms cubic-bezier(.23, 1, .32, 1); }
+  button:active, a:active { transform: scale(.97); }
+}
+
+@keyframes settle-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
