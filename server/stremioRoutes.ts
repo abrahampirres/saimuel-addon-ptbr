@@ -1,5 +1,6 @@
 import { Router, type Request, type Response } from "express";
 import { buildAddonManifest, getPublicProviderStatus, getStreamsForStremio } from "./addon/stremio";
+import { getAddonMonitorStatus } from "./scheduledAddonMonitor";
 
 function sendJson(response: Response, body: unknown, status = 200) {
   response.status(status).setHeader("Access-Control-Allow-Origin", "*").setHeader("Cache-Control", "no-store").json(body);
@@ -24,9 +25,10 @@ export function createStremioRouter() {
     }
   });
 
-  router.get("/api/addon/status", (_request, response) => {
+  router.get("/api/addon/status", async (_request, response) => {
     sendJson(response, {
       providers: getPublicProviderStatus(),
+      monitor: await getAddonMonitorStatus(),
       embedPlay: {
         status: "Índice somente",
         note: "A API EmbedPlay não é usada como fonte de reprodução, pois o endpoint fornecido retorna apenas IDs e não URLs de stream verificáveis.",

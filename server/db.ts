@@ -1,7 +1,8 @@
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { addonMonitorRuns, InsertUser, users } from "../drizzle/schema";
 import { ENV } from './_core/env';
+import type { MonitorSummary } from "./addon/monitoring";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -89,4 +90,37 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+export async function saveAddonMonitorRun(summary: MonitorSummary): Promise<void> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Monitoramento não registrado: banco indisponível");
+    return;
+  }
+
+  await db.insert(addonMonitorRuns).values(summary.checks.map(check => ({
+    runId: summary.runId,
+    target: check.target,
+    healthy: check.healthy ? 1 : 0,
+    statusCode: check.statusCode,
+    latencyMs: check.latencyMs,
+    detail: check.detail,
+  })));
+}
+
+export async function getLatestAddonMonitor() {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const [latest] = await db.select().from(addonMonitorRuns).orderBy(desc(addonMonitorRuns.checkedAt)).limit(1);
+  if (!latest) return undefined;
+
+  const checks = await db.select().from(addonMonitorRuns).where(eq(addonMonitorRuns.runId, latest.runId));
+  const failedChecks = checks.filter(check => check.healthy !== 1).length;
+  const coreFailed = checks.some(check => (check.target === "manifest" || check.target === "healthz") && check.healthy !== 1);
+  return {
+    status: coreFailed ? "down" as const : failedChecks > 0 ? "degraded" as const : "healthy" as const,
+    checkedAt: latest.checkedAt,
+    totalChecks: checks.length,
+    failedChecks,
+  };
+}

@@ -12,3 +12,9 @@
 - [x] Escrever testes Vitest para manifesto, mapeamento de streams, filtros de idioma, rotas e deduplicação.
 - [x] Validar o manifesto e exemplos determinísticos de respostas das rotas antes da entrega.
 - [x] Criar checkpoint final e fornecer a versão e o link de instalação para o Stremio.
+- [x] Diagnosticar por que o endereço publicado anterior exibiu manutenção e documentar a diferença entre URL de prévia, domínio publicado e domínio personalizado.
+- [x] Garantir que a página de instalação use apenas o domínio público publicado para o manifesto, nunca a URL temporária de desenvolvimento.
+- [x] Implementar o callback de monitoramento do manifesto e das fontes, com registro de falhas por provider e sem falsas promessas de disponibilidade de terceiros.
+- [ ] Validar a estratégia de continuidade e orientar a publicação em um domínio estável para instalações futuras no Stremio.
+- [x] Configurar a interface e a documentação para utilizar exclusivamente um subdomínio público fixo gratuito em `manus.space` após a publicação.
+- [ ] Após a publicação, criar e validar a rotina automática de monitoramento do domínio público a cada 15 minutos.

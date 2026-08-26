@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { BadgeCheck, Check, Clipboard, ExternalLink, Film, Radio, ShieldCheck, Sparkles, Tv } from "lucide-react";
+import { Activity, BadgeCheck, Check, Clipboard, ExternalLink, Film, Radio, ShieldCheck, Sparkles, Tv } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 type ProviderStatus = {
@@ -15,12 +15,20 @@ type ProviderStatus = {
 
 type AddonStatus = {
   providers: ProviderStatus[];
+  monitor: {
+    status: "pending" | "healthy" | "degraded" | "down";
+    label: string;
+    checkedAt: string | null;
+    totalChecks: number;
+    failedChecks: number;
+  };
   embedPlay: { status: string; note: string };
 };
 
 export default function Home() {
-  const manifestUrl = useMemo(() => `${window.location.origin}/manifest.json`, []);
-  const stremioInstallUrl = useMemo(() => `stremio://${manifestUrl.replace(/^https?:\/\//, "")}`, [manifestUrl]);
+  const isPreview = useMemo(() => /(^localhost$)|(^127\.0\.0\.1$)|\.manus\.computer$/i.test(window.location.hostname), []);
+  const manifestUrl = useMemo(() => isPreview ? null : `${window.location.origin}/manifest.json`, [isPreview]);
+  const stremioInstallUrl = useMemo(() => manifestUrl ? `stremio://${manifestUrl.replace(/^https?:\/\//, "")}` : "#", [manifestUrl]);
   const [copied, setCopied] = useState(false);
   const [status, setStatus] = useState<AddonStatus | null>(null);
 
@@ -32,6 +40,7 @@ export default function Home() {
   }, []);
 
   async function copyManifest() {
+    if (!manifestUrl) return;
     await navigator.clipboard.writeText(manifestUrl);
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1800);
@@ -73,12 +82,12 @@ export default function Home() {
               Um addon público que transforma providers Nuvio elegíveis em respostas compatíveis com o Stremio, com origem, qualidade e estado de disponibilidade visíveis.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Button asChild className="h-11 bg-emerald-300 px-5 font-bold text-slate-950 hover:bg-emerald-200">
+              {manifestUrl ? <Button asChild className="h-11 bg-emerald-300 px-5 font-bold text-slate-950 hover:bg-emerald-200">
                 <a href={stremioInstallUrl}>
                   Instalar no Stremio <ExternalLink size={16} />
                 </a>
-              </Button>
-              <Button variant="outline" onClick={copyManifest} className="h-11 border-white/15 bg-white/[0.03] px-5 text-white hover:bg-white/10 hover:text-white">
+              </Button> : <Button disabled className="h-11 bg-slate-700 px-5 font-bold text-slate-300">Publique para instalar</Button>}
+              <Button variant="outline" disabled={!manifestUrl} onClick={copyManifest} className="h-11 border-white/15 bg-white/[0.03] px-5 text-white hover:bg-white/10 hover:text-white">
                 {copied ? <Check size={16} className="text-emerald-300" /> : <Clipboard size={16} />}
                 {copied ? "URL copiada" : "Copiar manifesto"}
               </Button>
@@ -92,7 +101,8 @@ export default function Home() {
                 <span className="rounded-full bg-emerald-300/10 px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-wider text-emerald-300">Público</span>
               </div>
               <p className="mb-2 text-xs text-slate-400">URL do manifesto</p>
-              <code className="block break-all rounded-lg border border-white/10 bg-black/25 p-3 font-mono text-xs leading-5 text-emerald-200">{manifestUrl}</code>
+              <code className="block break-all rounded-lg border border-white/10 bg-black/25 p-3 font-mono text-xs leading-5 text-emerald-200">{manifestUrl ?? "Publique e defina um subdomínio fixo em manus.space"}</code>
+              {isPreview && <p className="mt-3 text-xs leading-5 text-amber-200">Esta é uma prévia temporária. Ela não pode ser usada para instalar o addon no Stremio.</p>}
               <div className="mt-5 grid grid-cols-2 gap-3">
                 <div className="rounded-lg border border-white/10 bg-white/[0.025] p-3"><Film size={18} className="mb-2 text-cyan-300" /><p className="text-sm font-bold">Filmes</p><p className="mt-1 text-xs text-slate-500">IDs IMDb → TMDB</p></div>
                 <div className="rounded-lg border border-white/10 bg-white/[0.025] p-3"><Tv size={18} className="mb-2 text-violet-300" /><p className="text-sm font-bold">Séries</p><p className="mt-1 text-xs text-slate-500">Temporada e episódio</p></div>
@@ -125,11 +135,15 @@ export default function Home() {
             <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-cyan-200">Critérios de confiança</p>
             <h2 className="mt-2 text-xl font-extrabold tracking-tight">O que este addon faz — e o que não faz.</h2>
             <div className="mt-6 space-y-4 text-sm leading-6 text-slate-400">
+              <div className="rounded-lg border border-white/10 bg-black/20 p-3">
+                <div className="flex items-center gap-2 text-xs font-bold text-slate-200"><Activity size={14} className={status?.monitor.status === "healthy" ? "text-emerald-300" : status?.monitor.status === "degraded" ? "text-amber-200" : "text-slate-400"} /> Monitoramento: {status?.monitor.label ?? "Carregando status"}</div>
+                {status?.monitor.checkedAt && <p className="mt-1 font-mono text-[10px] text-slate-500">Última verificação: {new Date(status.monitor.checkedAt).toLocaleString("pt-BR")} · {status.monitor.failedChecks}/{status.monitor.totalChecks} falhas</p>}
+              </div>
               <p><span className="font-semibold text-slate-200">Filtro PT/pt-BR:</span> só entram providers que declaram suporte a português. Uma indicação explícita de outro idioma é descartada na resposta.</p>
               <p><span className="font-semibold text-slate-200">Sem repetição:</span> Peachify aparece uma vez, mesmo estando declarado em mais de um repositório.</p>
               <p><span className="font-semibold text-slate-200">EmbedPlay:</span> permanece apenas como índice potencial de IDs. Não é usado para reprodução enquanto não houver uma rota pública de streams verificável.</p>
             </div>
-            <div className="mt-6 rounded-lg border border-white/10 bg-black/20 p-3 font-mono text-[11px] leading-5 text-slate-500">Os links são retornados por fontes de terceiros. A disponibilidade pode variar e o uso deve respeitar as leis e os direitos aplicáveis.</div>
+            <div className="mt-6 rounded-lg border border-white/10 bg-black/20 p-3 font-mono text-[11px] leading-5 text-slate-500">Use somente o manifesto no subdomínio público publicado. Os links são retornados por fontes de terceiros; a disponibilidade pode variar e o uso deve respeitar as leis e os direitos aplicáveis.</div>
           </aside>
         </section>
       </main>

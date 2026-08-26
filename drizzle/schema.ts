@@ -25,4 +25,17 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// TODO: Add your tables here
+/** Histórico por alvo da verificação automática de disponibilidade do addon. */
+export const addonMonitorRuns = mysqlTable("addonMonitorRuns", {
+  id: int("id").autoincrement().primaryKey(),
+  runId: varchar("runId", { length: 64 }).notNull(),
+  target: varchar("target", { length: 96 }).notNull(),
+  healthy: int("healthy").notNull(),
+  statusCode: int("statusCode"),
+  latencyMs: int("latencyMs").notNull(),
+  detail: text("detail").notNull(),
+  checkedAt: timestamp("checkedAt").defaultNow().notNull(),
+});
+
+export type AddonMonitorRun = typeof addonMonitorRuns.$inferSelect;
+export type InsertAddonMonitorRun = typeof addonMonitorRuns.$inferInsert;
